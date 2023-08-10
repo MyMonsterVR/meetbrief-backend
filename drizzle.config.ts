@@ -5,10 +5,10 @@ export default {
   out: "./drizzle",
   driver: "mysql2",
   dbCredentials: {
-    host: "sql7.freemysqlhosting.net",
-    user: "sql7638577",
-    database: "sql7638577",
-    password: "SFFt5IyF8E",
+    host: process.env.DATABASE_HOST || "",
+    user: process.env.DATABASE_USERNAME || "",
+    password: process.env.DATABASE_PASSWORD || "",
+    database: process.env.DATABASE_NAME || "",
     port: 3306,
   },
 } satisfies Config;
