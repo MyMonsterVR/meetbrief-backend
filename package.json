@@ -6,17 +6,28 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "drizzle-kit generate:mysql",
+    "push": "drizzle-kit push:mysql",
+    "introspect": "drizzle-kit introspect:mysql",
+    "studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@types/node": "20.4.9",
     "@types/react": "18.2.19",
     "@types/react-dom": "18.2.7",
+    "bcrypt": "^5.1.0",
+    "crypto": "^1.0.1",
+    "drizzle-orm": "^0.28.1",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
+    "mysql2": "^3.6.0",
     "next": "13.4.13",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.19.12"
   }
 }

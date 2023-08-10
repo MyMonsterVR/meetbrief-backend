@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1691650876167,
+      "tag": "0000_melodic_james_howlett",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1691651324050,
+      "tag": "0001_flashy_hex",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1691651510459,
+      "tag": "0002_friendly_nightshade",
+      "breakpoints": true
+    }
+  ]
+}
