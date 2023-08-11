@@ -13,12 +13,14 @@ type User = {
 };
 
 export async function GET(req: NextRequest, res: NextApiResponse) {
-  const emailInput    = req.nextUrl.searchParams.get("email");
   const usernameInput = req.nextUrl.searchParams.get("username");
   const passwordInput = req.nextUrl.searchParams.get("password");
 
-  if (!emailInput || !usernameInput || !passwordInput) {
-    return NextResponse.json({ msg: "Failed due to missing fields", errorCode: 'MISSING_FIELDS' }, { status: 500 });
+  if (!usernameInput || !passwordInput) {
+    return NextResponse.json(
+      { msg: "Failed due to missing fields", errorCode: "MISSING_FIELDS" },
+      { status: 500 }
+    );
   }
 
   const user = await db
@@ -29,29 +31,50 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
       salt: users.salt,
     })
     .from(users)
-    .where(and(eq(users.email, emailInput), eq(users.username, usernameInput))).limit(1);
+    .where(eq(users.username, usernameInput))
+    .limit(1);
 
   if (!user) {
-    return NextResponse.json({ msg: "SQL Error: could not get user" }, { status: 500 });
-  }
-  
-  // check if user length is 1
-  // if not return error
-  
-  if(user.length < 1) {
-    return NextResponse.json({ msg: "User do not exist" }, { status: 500 });
+    return NextResponse.json(
+      {
+        msg: "SQL Error: could not get user",
+        errorCode: "FAILED_TO_FETCH_USER",
+        status: "failed",
+      },
+      { status: 500 }
+    );
   }
 
-   const { password, salt } = user[0];
+  // check if user length is 1
+  // if not return error
+
+  if (user.length < 1) {
+    return NextResponse.json(
+      { msg: "User do not exist", errorCode: "NO_USER", status: "failed" },
+      { status: 500 }
+    );
+  }
+
+  const { password, salt } = user[0];
 
   const hashedBuffer = scryptSync(passwordInput, salt, 64);
 
   const keyBuffer = Buffer.from(password, "hex");
   const match = timingSafeEqual(hashedBuffer, keyBuffer);
 
-  if(!match) {
-    return NextResponse.json({ msg: "Credentials do not match" }, { status: 500 });
+  if (!match) {
+    return NextResponse.json(
+      {
+        msg: "Credentials do not match",
+        errorCode: "BAD_CREDENTIALS",
+        status: "failed",
+      },
+      { status: 500 }
+    );
   }
 
-  return NextResponse.json({ msg: "Successful", }, { status: 200 });
+  return NextResponse.json(
+    { msg: "Successful", status: "success" },
+    { status: 200 }
+  );
 }
