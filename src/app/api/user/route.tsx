@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { users } from "@/schema/schema";
 import { scryptSync, randomBytes, timingSafeEqual } from "crypto";
 import { and, eq } from "drizzle-orm";
+import NextCors from "nextjs-cors";
 
 type UserType = {
   username: string;
@@ -13,46 +14,15 @@ type UserType = {
   createdDate: Date;
 };
 
-export async function GET(req: NextRequest, res: NextApiResponse) {
-  const usernameInput = req.nextUrl.searchParams.get("username");
-  const passwordInput = req.nextUrl.searchParams.get("password");
+export const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
 
-  if (!usernameInput || !passwordInput) {
-    return NextResponse.json({ msg: "Failed due to missing fields", errorCode: 'MISSING_FIELDS' }, { status: 500 });
-  }
 
-  const user = await db
-    .select({
-      username: users.username,
-      password: users.password,
-      salt: users.salt,
-    })
-    .from(users)
-    .where(eq(users.username, usernameInput)).limit(1);
-
-  if (!user) {
-    return NextResponse.json({ msg: "SQL Error: could not get user" }, { status: 500 });
-  }
-  
-  // check if user length is 1
-  // if not return error
-  
-  if(user.length < 1) {
-    return NextResponse.json({ msg: "User do not exist" }, { status: 500 });
-  }
-
-   const { password, salt } = user[0];
-
-  const hashedBuffer = scryptSync(passwordInput, salt, 64);
-
-  const keyBuffer = Buffer.from(password, "hex");
-  const match = timingSafeEqual(hashedBuffer, keyBuffer);
-
-  if(!match) {
-    return NextResponse.json({ msg: "Credentials do not match" }, { status: 500 });
-  }
-
-  return NextResponse.json({ msg: "Successful", }, { status: 200 });
+export async function OPTIONS(req: NextRequest) {
+  return NextResponse.json({}, { headers: corsHeaders });
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
