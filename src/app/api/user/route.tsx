@@ -85,6 +85,7 @@ export async function PUT(req: NextRequest, res: NextApiResponse) {
       return NextResponse.json(
         {
           msg: "Failed due to missing fields",
+          errorCode: "MISSING_FIELDS",
           emailInput,
           passwordInput,
         },
@@ -105,7 +106,7 @@ export async function PUT(req: NextRequest, res: NextApiResponse) {
     if (!userDetails) {
       return NextResponse.json(
         {
-          msg: "SQL Error: could not get user",
+          msg: "SQL Error: Could not get user",
           errorCode: "FAILED_TO_FETCH_USER",
           status: "failed",
         },
@@ -154,7 +155,11 @@ export async function PUT(req: NextRequest, res: NextApiResponse) {
 
     if (!user) {
       return NextResponse.json(
-        { msg: "SQL Error: could not insert user" },
+        {
+          msg: "SQL Error: Could not insert user",
+          errorCode: "FAILED_TO_INSERT_USER",
+          status: "failed",
+        },
         { status: 500 }
       );
     }
@@ -164,6 +169,7 @@ export async function PUT(req: NextRequest, res: NextApiResponse) {
     return NextResponse.json(
       {
         msg: error,
+        errorCode: "UNKNOWN_ERROR",
       },
       {
         status: 500,
