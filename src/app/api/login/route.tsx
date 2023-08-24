@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { users } from "@/schema/schema";
 import { scryptSync, randomBytes, timingSafeEqual } from "crypto";
 import { and, eq } from "drizzle-orm";
+import jwt from 'jsonwebtoken';
 
 type User = {
   username: string;
@@ -25,6 +26,7 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
 
   const user = await db
     .select({
+      userid: users.id,
       email: users.email,
       username: users.username,
       password: users.password,
@@ -73,8 +75,14 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
     );
   }
 
+  const userid = user[0].userid;
+
+  const token = jwt.sign({ userid }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
+
   return NextResponse.json(
-    { msg: "Successful", status: "success" },
+    { msg: "Successful", status: "success", token },
     { status: 200 }
   );
 }
