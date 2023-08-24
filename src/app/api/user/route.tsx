@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { users } from "@/schema/schema";
 import { scryptSync, randomBytes, timingSafeEqual } from "crypto";
 import { and, eq } from "drizzle-orm";
+import jwt from "jsonwebtoken";
 
 type UserType = {
   username?: string;
@@ -81,6 +82,32 @@ export async function PUT(req: NextRequest, res: NextApiResponse) {
   } = await req.json();
 
   try {
+    const token = req.headers.get("Authorization")?.split(" ")[1];
+    const decoded = jwt.decode(token);
+
+    if (!decoded) {
+      return NextResponse.json(
+        {
+          msg: "Invalid token",
+          errorCode: "INVALID_TOKEN",
+          status: "failed",
+        },
+        { status: 500 }
+      );
+    }
+
+    // expired token
+    if (Date.now() > decoded.exp * 1000) {
+      return NextResponse.json(
+        {
+          msg: "Expired token",
+          errorCode: "EXPIRED_TOKEN",
+          status: "failed",
+        },
+        { status: 500 }
+      );
+    }
+
     if (!emailInput || !passwordInput) {
       return NextResponse.json(
         {
