@@ -1,9 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { trancripts } from "@/schema/schema";
-import { scryptSync, randomBytes, timingSafeEqual } from "crypto";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export async function GET(req: NextRequest, res: NextApiResponse) {
   const id = req.nextUrl.searchParams.get("id");
@@ -26,8 +25,8 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
   if (!transcripts) {
     return NextResponse.json(
       {
-        msg: "SQL Error: could not get user",
-        errorCode: "FAILED_TO_FETCH_USER",
+        msg: "SQL Error: could not find transcripts",
+        errorCode: "FAILED_TO_FIND_TRANSCRIPTS",
         status: "failed",
       },
       { status: 500 }
@@ -44,18 +43,14 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
   const { userId, name, content } = await req.json();
 
 
-  if (!name || !content) {
+  if (!userId || !name || !content) {
     return NextResponse.json(
       { msg: "Failed due to missing fields", errorCode: "MISSING_FIELDS" },
       { status: 500 }
     );
   }
 
-  const input = {
-    userId,
-    name,
-    content,
-  };
+  const input = {id:userId, name, content}
 
   const transcripts = await db.insert(trancripts).values(input);
 
