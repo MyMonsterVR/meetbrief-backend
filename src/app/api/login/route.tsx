@@ -89,7 +89,7 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
     process.env.TWILIO_API_KEY_SECRET as string,
     // generate a random unique identity for this participant
     { identity: uuidv4() }
-  );
+  ).toJwt();
 
   return NextResponse.json(
     { msg: "Successful", status: "success", token, twilioToken },
