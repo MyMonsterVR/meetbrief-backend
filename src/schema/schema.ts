@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, unique, int, varchar, timestamp } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, unique, int, varchar, timestamp, text } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 
@@ -21,7 +21,7 @@ export const users = mysqlTable("users", {
 export const trancripts = mysqlTable("trancripts", {
 	id: int("id").autoincrement().primaryKey(),
 	name: varchar("name", { length: 255 }),
-	content: varchar("content", { length: 255 }),
+	content: text("content"),
 	createdDate: timestamp("created_date", { mode: 'string' }).defaultNow().notNull(),
 	updatedDate: timestamp("updated_date", { mode: 'string' }).default('0000-00-00 00:00:00').notNull(),
 });
