@@ -2,7 +2,7 @@
 const getCorsHeaders = () => {
     const headers = {};
     
-    headers["Access-Control-Allow-Origin"] = "http://localhost:9000";
+    headers["Access-Control-Allow-Origin"] = "http://pi.local:3000";
     headers["Access-Control-Allow-Credentials"] = "true";
     headers["Access-Control-Allow-Methods"] =
       "GET,OPTIONS,PATCH,DELETE,POST,PUT";
