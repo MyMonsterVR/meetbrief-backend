@@ -7,6 +7,9 @@ import { and, eq } from "drizzle-orm";
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import AccessToken from 'twilio/lib/jwt/AccessToken';
+import { cwd } from 'node:process';
+import { loadEnvConfig } from '@next/env'
+
 
 type User = {
   username: string;
@@ -16,6 +19,8 @@ type User = {
 };
 
 export async function GET(req: NextRequest, res: NextApiResponse) {
+  loadEnvConfig(cwd());
+
   const usernameInput = req.nextUrl.searchParams.get("username");
   const passwordInput = req.nextUrl.searchParams.get("password");
 
@@ -83,10 +88,12 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
     expiresIn: "24h",
   });
 
+  console.log(process.env.TWILIO_API_KEY)
+
   const twilioToken = new AccessToken(
     process.env.TWILIO_ACCOUNT_SID as string,
-    process.env.TWILIO_API_KEY_SID as string,
-    process.env.TWILIO_API_KEY_SECRET as string,
+    process.env.TWILIO_API_KEY as string,
+    process.env.TWILIO_API_SECRET as string,
     // generate a random unique identity for this participant
     { identity: uuidv4() }
   ).toJwt();
