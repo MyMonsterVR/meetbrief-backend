@@ -5,6 +5,8 @@ import { users } from "@/schema/schema";
 import { scryptSync, randomBytes, timingSafeEqual } from "crypto";
 import { and, eq } from "drizzle-orm";
 import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
+import AccessToken from 'twilio/lib/jwt/AccessToken';
 
 type User = {
   username: string;
@@ -81,8 +83,16 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
     expiresIn: "24h",
   });
 
+  const twilioToken = new AccessToken(
+    process.env.TWILIO_ACCOUNT_SID as string,
+    process.env.TWILIO_API_KEY_SID as string,
+    process.env.TWILIO_API_KEY_SECRET as string,
+    // generate a random unique identity for this participant
+    { identity: uuidv4() }
+  );
+
   return NextResponse.json(
-    { msg: "Successful", status: "success", token },
+    { msg: "Successful", status: "success", token, twilioToken },
     { status: 200 }
   );
 }
