@@ -10,7 +10,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
   if (!token) {
     return NextResponse.json({ msg: "No token provided" }, { status: 401 });
-  }
+  }0
 
   if (!secret) {
     return NextResponse.json({ msg: "No secret provided" }, { status: 401 });
@@ -18,14 +18,14 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
   try {
     const decoded = jsw.verify(token, secret);
-
+    console.log(decoded);
     const userInfo = db
       .select({
         username: users.username,
         email: users.email,
       })
       .from(users)
-      .where(eq(users, decoded.userid))
+      .where(eq(users.id, decoded.userid))
       .limit(1);
 
     return NextResponse.json({ msg: userInfo }, { status: 200 });
