@@ -95,7 +95,7 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
         if (error.code === 20404) {
             await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"}).then(room => {
                 return NextResponse.json(
-                    { msg: "Successful", status: "success", room: room.sid},
+                    { msg: "Successful", status: "success", room: "test" + room.sid},
                     { status: 200 }
                   );
             });
