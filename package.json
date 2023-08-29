@@ -22,12 +22,15 @@
     "drizzle-orm": "^0.28.1",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
+    "jsonwebtoken": "^9.0.1",
     "mysql2": "^3.6.0",
     "next": "13.4.13",
     "nextjs-cors": "^2.1.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.1.6"
+    "twilio": "^4.16.0",
+    "typescript": "5.1.6",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "drizzle-kit": "^0.19.12"

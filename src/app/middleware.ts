@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const allowedOrigins = [
-    "https://www.my-frontend.com"
+    "https://pi.local:3000",
+    "https://pi.local:9000"
   ];
   export function middleware(request: NextRequest) {
     
