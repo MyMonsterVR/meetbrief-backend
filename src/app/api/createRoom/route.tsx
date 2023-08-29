@@ -90,8 +90,9 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
         return { msg: "Successful", status: "success", room: "We dead"};
     } catch (error: any) {
       try {
-        await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"});
-        return { msg: "Successful", status: "success", room: "We dead 20", error};
+        let room = null as any;
+        await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"}).then(room => room);
+        return { msg: "Successful", status: "success", mes: `We dead ${room.sid}`, room};
       } catch (error: any) {
         return { msg: "Successful", status: "success", room: "We alive", error};
       }
