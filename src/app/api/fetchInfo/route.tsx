@@ -5,27 +5,32 @@ import { users } from "@/schema/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(req: NextRequest, res: NextResponse) {
-    const token = req.nextUrl.searchParams.get("token");
-    const secret = process.env.JWT_SECRET;
+  const token = req.nextUrl.searchParams.get("token");
+  const secret = process.env.JWT_SECRET;
 
-    if (!token) {
-        return NextResponse.json({ msg: "No token provided" }, { status: 401 });
-    }
+  if (!token) {
+    return NextResponse.json({ msg: "No token provided" }, { status: 401 });
+  }
 
-    if (!secret) {
-        return NextResponse.json({ msg: "No secret provided" }, { status: 401 });
-    }
+  if (!secret) {
+    return NextResponse.json({ msg: "No secret provided" }, { status: 401 });
+  }
 
-    try {
-        const decoded = jsw.verify(token, secret);
+  try {
+    const decoded = jsw.verify(token, secret);
 
-        const userInfo = db.select().from(users).where(eq(users, decoded.userid)).limit(1);
+    const userInfo = db
+      .select({
+        username: users.username,
+        email: users.email,
+      })
+      .from(users)
+      .where(eq(users, decoded.userid))
+      .limit(1);
 
-        return NextResponse.json({ msg: userInfo }, { status: 200 });
-    } catch (err) {
-        console.log(err);
-        return NextResponse.json({ msg: "Invalid token" }, { status: 401 });
-    }
-
-
+    return NextResponse.json({ msg: userInfo }, { status: 200 });
+  } catch (err) {
+    console.log(err);
+    return NextResponse.json({ msg: "Invalid token" }, { status: 401 });
+  }
 }
