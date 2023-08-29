@@ -18,8 +18,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
   try {
     const decoded = jsw.verify(token, secret);
-    console.log(decoded);
-    const userInfo = db
+
+    const userInfo = await db
       .select({
         username: users.username,
         email: users.email,
