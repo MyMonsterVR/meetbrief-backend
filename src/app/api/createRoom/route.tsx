@@ -108,10 +108,10 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
     }
   }
 
-  await findOrCreateRoom(roomNameInput as string);
+  const result = await findOrCreateRoom(roomNameInput as string);
 
   return NextResponse.json(
-    { msg: "Successful", status: "success"},
+    { msg: "Successful", status: "success", room: result},
     { status: 200 }
   );
 }
