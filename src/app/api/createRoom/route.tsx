@@ -89,11 +89,13 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
         await twilioClient.video.v1.rooms(roomNameInput).fetch();
         return NextResponse.json(
             { msg: `A room with the name ${roomNameInput} already exists`, status: "failed" },
-            { status: 4009 }
+            { status: 409 }
           );
     } catch (error: any) {
         if (error.code === 20404) {
-            await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput});
+            await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"}).then(room => {
+                console.log(room.sid);
+            });
         } else {
             return NextResponse.json(
                 { msg: error, status: "failed" },
