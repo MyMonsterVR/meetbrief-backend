@@ -5,7 +5,7 @@ import { users } from "@/schema/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(req: NextRequest, res: NextResponse) {
-  const token = req.nextUrl.searchParams.get("token");
+  const token = req.headers.get("Authorization")?.split(" ")[1];
   const secret = process.env.JWT_SECRET;
 
   if (!token) {
