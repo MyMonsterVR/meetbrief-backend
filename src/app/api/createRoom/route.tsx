@@ -93,12 +93,11 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
           );
     } catch (error: any) {
         if (error.code === 20404) {
-            await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"}).then(room => {
-                return NextResponse.json(
-                    { msg: "Successful", status: "success", room: "test" + room.sid},
-                    { status: 200 }
-                  );
-            });
+            await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"});
+            return NextResponse.json(
+                { msg: "Successful", status: "success", room: "We dead"},
+                { status: 200 }
+              );
         } else {
             return NextResponse.json(
                 { msg: error, status: "failed" },
