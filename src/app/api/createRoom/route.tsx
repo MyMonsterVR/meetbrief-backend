@@ -87,26 +87,14 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
   const findOrCreateRoom = async (roomNameInput: string) => {
     try {
         await twilioClient.video.v1.rooms(roomNameInput).fetch();
-        return { msg: "Successful", status: "success", room: "We dead"}
-        return NextResponse.json(
-            { msg: `A room with the name ${roomNameInput} already exists`, status: "failed" },
-            { status: 409 }
-          );
+        return { msg: "Successful", status: "success", room: "We dead"};
     } catch (error: any) {
-        if (error.code === 20404) {
-            await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"});
-            return { msg: "Successful", status: "success", room: "We dead 20", error}
-            return NextResponse.json(
-                { msg: "Successful", status: "success", room: "We dead"},
-                { status: 200 }
-              );
-        } else {
-            return { msg: "Successful", status: "success", room: "We alive", error}
-            return NextResponse.json(
-                { msg: error, status: "failed" },
-                { status: error.code }
-              );
-        }
+      try {
+        await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"});
+        return { msg: "Successful", status: "success", room: "We dead 20", error};
+      } catch (error: any) {
+        return { msg: "Successful", status: "success", room: "We alive", error};
+      }
     }
   }
 
