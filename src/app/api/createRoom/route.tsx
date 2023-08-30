@@ -19,10 +19,10 @@ export async function OPTIONS(req: NextRequest) {
 export async function POST(req: NextRequest, res: NextApiResponse) {
   
   const options = await req.json();
-  const roomNameInput = options.roomName; 
-  const roomTypeInput = options.type; 
-  const maxParticipantsInput = options.maxParticipants; 
-  const audioOnlyInput = options.audioOnly; 
+  const roomNameInput = options.options.roomName; 
+  const roomTypeInput = options.options.type; 
+  const maxParticipantsInput = options.options.maxParticipants; 
+  const audioOnlyInput = options.options.audioOnly; 
 
   const token = req.headers.get("Authorization")?.split(" ")[1];
   const decoded = jwt.decode(token);
