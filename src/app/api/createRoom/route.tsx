@@ -18,7 +18,12 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function POST(req: NextRequest, res: NextApiResponse) {
   
-  const { roomname: roomNameInput } = await req.json();
+  const { 
+    roomName: roomNameInput, 
+    type: roomTypeInput, 
+    maxParticipants: maxParticipantsInput, 
+    audioOnly: audioOnlyInput, 
+  } = await req.json();
 
   const token = req.headers.get("Authorization")?.split(" ")[1];
   const decoded = jwt.decode(token);
@@ -84,14 +89,19 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
     );
   }
 
-  const findOrCreateRoom = async (roomNameInput: string) => {
+  const findOrCreateRoom = async () => {
     try {
         await twilioClient.video.v1.rooms(roomNameInput).fetch();
         return { msg: "Successful", status: "success", room: "We dead"};
     } catch (error: any) {
       try {
         let newRoom = null as any;
-        await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"}).then(room => newRoom = room);
+        await twilioClient.video.v1.rooms.create({
+          uniqueName: roomNameInput, 
+          type: roomTypeInput, 
+          maxParticipants: maxParticipantsInput, 
+          audioOnly: audioOnlyInput 
+        }).then(room => newRoom = room);
         return {uniqueName: newRoom.uniqueName, room: newRoom}
       } catch (error: any) {
         return { msg: "Successful", status: "success", room: "We alive", error};
@@ -99,7 +109,7 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
     }
   }
 
-  const result = await findOrCreateRoom(roomNameInput as string);
+  const result = await findOrCreateRoom();
 
   return NextResponse.json(
     { msg: "Successful", status: "success", room: result},
