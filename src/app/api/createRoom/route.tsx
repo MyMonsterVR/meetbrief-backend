@@ -18,7 +18,7 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function POST(req: NextRequest, res: NextApiResponse) {
   
-  const roomNameInput = req.nextUrl.searchParams.get("roomname");
+  const { roomname: roomNameInput } = await req.json();
 
   const token = req.headers.get("Authorization")?.split(" ")[1];
   const decoded = jwt.decode(token);
