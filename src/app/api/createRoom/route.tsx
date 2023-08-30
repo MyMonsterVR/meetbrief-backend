@@ -101,7 +101,7 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
           maxParticipants: maxParticipantsInput, 
           audioOnly: audioOnlyInput 
         }).then(room => newRoom = room);
-        return {uniqueName: newRoom.uniqueName, room: newRoom}
+        return {uniqueName: newRoom.uniqueName, room: newRoom, options: options}
       } catch (error: any) {
         return { msg: "Successful", status: "success", room: "We alive", error};
       }
