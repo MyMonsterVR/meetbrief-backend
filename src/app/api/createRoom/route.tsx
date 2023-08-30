@@ -91,7 +91,7 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
   const findOrCreateRoom = async () => {
     try {
         await twilioClient.video.v1.rooms(roomNameInput).fetch();
-        return { msg: "Successful", status: "success", room: "We dead"};
+        return { msg: "Successful", status: "success", room: "We dead", options: options};
     } catch (error: any) {
       try {
         let newRoom = null as any;
