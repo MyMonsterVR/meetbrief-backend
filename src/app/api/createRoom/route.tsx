@@ -20,7 +20,7 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
   
   const options = await req.json();
   console.log(options)
-  const roomNameInput = options.options.roomName; 
+  const roomNameInput = options.roomName; 
   const roomTypeInput = options.options.type; 
   const maxParticipantsInput = options.options.maxParticipants; 
   const audioOnlyInput = options.options.audioOnly; 
