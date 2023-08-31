@@ -24,4 +24,5 @@ export const trancripts = mysqlTable("trancripts", {
 	content: text("content"),
 	createdDate: timestamp("created_date", { mode: 'string' }).defaultNow().notNull(),
 	updatedDate: timestamp("updated_date", { mode: 'string' }).default('0000-00-00 00:00:00').notNull(),
+	userId: int("user_id").notNull(),
 });
