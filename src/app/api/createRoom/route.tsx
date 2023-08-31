@@ -18,7 +18,11 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function POST(req: NextRequest, res: NextApiResponse) {
   
-  const { roomName: roomNameInput } = await req.json();
+  const options = await req.json();
+  const roomNameInput = options.options.roomName; 
+  const roomTypeInput = options.options.type; 
+  const maxParticipantsInput = options.options.maxParticipants; 
+  const audioOnlyInput = options.options.audioOnly; 
 
   const token = req.headers.get("Authorization")?.split(" ")[1];
   const decoded = jwt.decode(token);
@@ -84,22 +88,27 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
     );
   }
 
-  const findOrCreateRoom = async (roomNameInput: string) => {
+  const findOrCreateRoom = async () => {
     try {
         await twilioClient.video.v1.rooms(roomNameInput).fetch();
-        return { msg: "Successful", status: "success", room: "We dead"};
+        return { msg: "Successful", status: "success", room: "We dead", options: options};
     } catch (error: any) {
       try {
         let newRoom = null as any;
-        await twilioClient.video.v1.rooms.create({uniqueName: roomNameInput, type: "go"}).then(room => newRoom = room);
-        return {uniqueName: newRoom.uniqueName, room: newRoom}
+        await twilioClient.video.v1.rooms.create({
+          uniqueName: roomNameInput, 
+          type: roomTypeInput, 
+          maxParticipants: maxParticipantsInput, 
+          audioOnly: audioOnlyInput 
+        }).then(room => newRoom = room);
+        return {uniqueName: newRoom.uniqueName, room: newRoom, options: options}
       } catch (error: any) {
-        return { msg: "Successful", status: "success", room: "We alive", error};
+        return { msg: "Successful", status: "success", room: "We alive", test: {roomNameInput, roomTypeInput, maxParticipantsInput, audioOnlyInput}};
       }
     }
   }
 
-  const result = await findOrCreateRoom(roomNameInput as string);
+  const result = await findOrCreateRoom();
 
   return NextResponse.json(
     { msg: "Successful", status: "success", room: result},
