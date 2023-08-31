@@ -19,6 +19,7 @@ export async function OPTIONS(req: NextRequest) {
 export async function POST(req: NextRequest, res: NextApiResponse) {
   
   const options = await req.json();
+  console.log(options)
   const roomNameInput = options.options.roomName; 
   const roomTypeInput = options.options.type; 
   const maxParticipantsInput = options.options.maxParticipants; 
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
     process.env.TWILIO_API_KEY as string,
     process.env.TWILIO_API_SECRET as string,
     { accountSid: process.env.TWILIO_ACCOUNT_SID as string }
-    );
+  );
 
   if (!decoded) {
     return NextResponse.json(
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
   if (!user) {
     return NextResponse.json(
       {
-        msg: "SQL Error: could not get user",
+        msg: "SQL Error: Could not get user",
         errorCode: "FAILED_TO_FETCH_USER",
         status: "failed",
       },
