@@ -15,7 +15,7 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
   loadEnvConfig(cwd());
   
   const roomNameInput = req.nextUrl.searchParams.get("roomname");
-  const chatName = roomNameInput + "-chat";
+  const chatName = roomNameInput as string + "-chat";
 
   const token = req.headers.get("Authorization")?.split(" ")[1];
   const decoded = jwt.decode(token);
@@ -90,6 +90,11 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
       for (let i = 0; i < newConversation.length; i++) {
         if (newConversation[i].friendlyName === name) {
           return newConversation[i];
+        } else {
+          const newConversation = await twilioClient.conversations.v1.conversations.create({
+            friendlyName: name
+          });
+          return newConversation;
         }
       }
     } catch {
