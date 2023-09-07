@@ -89,7 +89,7 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
       const newConversation = await twilioClient.conversations.v1.conversations.list();
       for (let i = 0; i < newConversation.length; i++) {
         if (newConversation[i].friendlyName === name) {
-          return newConversation;
+          return newConversation[i];
         }
       }
     } catch {
