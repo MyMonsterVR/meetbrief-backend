@@ -7,17 +7,26 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import AccessToken from 'twilio/lib/jwt/AccessToken';
 import { cwd } from 'node:process';
-import { loadEnvConfig } from '@next/env'
+import { loadEnvConfig } from '@next/env';
+import Twilio from 'twilio';
 
 
 export async function GET(req: NextRequest, res: NextApiResponse) {
   loadEnvConfig(cwd());
   
   const roomNameInput = req.nextUrl.searchParams.get("roomname");
+  const usernameInput = req.nextUrl.searchParams.get("username") ?? 'test';
 
   const token = req.headers.get("Authorization")?.split(" ")[1];
   const decoded = jwt.decode(token);
   const VideoGrant = AccessToken.VideoGrant;
+  const ChatGrant = AccessToken.ChatGrant;
+
+  const twilioClient = Twilio(
+    process.env.TWILIO_API_KEY as string,
+    process.env.TWILIO_API_SECRET as string,
+    { accountSid: process.env.TWILIO_ACCOUNT_SID as string }
+  );
 
   if (!decoded) {
     return NextResponse.json(
@@ -75,6 +84,22 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
     );
   }
 
+  const getChatroom = async (name: string) => {
+    const newConversation = await twilioClient.conversations.v1.conversations.list();
+    for (let i = 0; i > newConversation.length; i++) {
+      if (newConversation[i].friendlyName == name) {
+        return newConversation[i];
+      };
+    };
+
+    // a conversation with the given name does not exist ==> create a new one
+    return await twilioClient.conversations.v1.conversations.create({
+      friendlyName: name
+    });
+  }
+
+  const conversation = await getChatroom('My Room');
+
   const twilioToken = new AccessToken(
     process.env.TWILIO_ACCOUNT_SID as string,
     process.env.TWILIO_API_KEY as string,
@@ -86,11 +111,15 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
   const videoGrant = new VideoGrant({
     room: roomNameInput as string,
   });
+
+  const chatGrant = new ChatGrant({
+    serviceSid: conversation.chatServiceSid,
+  });
   
   twilioToken.addGrant(videoGrant);
-
+  twilioToken.addGrant(chatGrant);
   return NextResponse.json(
-    { msg: "Successful", status: "success", twilioToken: twilioToken.toJwt() },
+    { msg: "Successful", status: "success", twilioToken: twilioToken.toJwt(), conversationSid: conversation.sid },
     { status: 200 }
   );
 }
