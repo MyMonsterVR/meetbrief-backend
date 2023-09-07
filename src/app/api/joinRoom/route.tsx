@@ -85,17 +85,17 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
   }
 
   const getChatroom = async (name: string) => {
-    const newConversation = await twilioClient.conversations.v1.conversations.list();
-    for (let i = 0; i > newConversation.length; i++) {
-      if (newConversation[i].friendlyName == name) {
-        return newConversation[i];
-      };
-    };
+    try {
+      const newConversation = await twilioClient.conversations.v1.conversations(name).fetch();
+      return newConversation;
+    } catch {
+      // a conversation with the given name does not exist ==> create a new one
+      const newConversation = await twilioClient.conversations.v1.conversations.create({
+        friendlyName: name
+      });
+      return newConversation;
+    }
 
-    // a conversation with the given name does not exist ==> create a new one
-    return await twilioClient.conversations.v1.conversations.create({
-      friendlyName: name
-    });
   }
 
   const conversation = await getChatroom(chatName);
