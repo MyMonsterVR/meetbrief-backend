@@ -99,6 +99,17 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
   }
 
   const conversation = await getChatroom('My Room');
+  try {
+    await twilioClient.conversations.v1.conversations(conversation.sid).participants.create({
+      identity: usernameInput
+    });
+  } catch {
+    return {
+        msg: "Could not create participant",
+        errorCode: "FAILED_TO_CREATE_PARTICIPANT",
+        status: "failed",
+      };
+  }
 
   const twilioToken = new AccessToken(
     process.env.TWILIO_ACCOUNT_SID as string,
