@@ -15,7 +15,7 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
   loadEnvConfig(cwd());
   
   const roomNameInput = req.nextUrl.searchParams.get("roomname");
-  const usernameInput = req.nextUrl.searchParams.get("username") ?? 'test';
+  const chatName = roomNameInput + "-chat";
 
   const token = req.headers.get("Authorization")?.split(" ")[1];
   const decoded = jwt.decode(token);
@@ -98,18 +98,7 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
     });
   }
 
-  const conversation = await getChatroom('My Room');
-  try {
-    await twilioClient.conversations.v1.conversations(conversation.sid).participants.create({
-      identity: usernameInput
-    });
-  } catch {
-    return {
-        msg: "Could not create participant",
-        errorCode: "FAILED_TO_CREATE_PARTICIPANT",
-        status: "failed",
-      };
-  }
+  const conversation = await getChatroom(chatName);
 
   const twilioToken = new AccessToken(
     process.env.TWILIO_ACCOUNT_SID as string,
@@ -124,7 +113,7 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
   });
 
   const chatGrant = new ChatGrant({
-    serviceSid: "IS655aa7db384842ecb7419c4ce6ac585c"
+    serviceSid: conversation.chatServiceSid
   });
   
   twilioToken.addGrant(videoGrant);
