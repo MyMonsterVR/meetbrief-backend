@@ -9,7 +9,7 @@ export const users = mysqlTable("users", {
 	password: varchar("password", { length: 255 }),
 	salt: varchar("salt", { length: 255 }),
 	createdDate: timestamp("created_date", { mode: 'string' }).defaultNow().notNull(),
-	updatedDate: timestamp("updated_date", { mode: 'string' }).default('0000-00-00 00:00:00').notNull(),
+	updatedDate: timestamp("updated_date", { mode: 'string' }).defaultNow().notNull(),
 },
 (table) => {
 	return {
@@ -19,7 +19,7 @@ export const users = mysqlTable("users", {
 });
 
 export const trancripts = mysqlTable("trancripts", {
-	id: int("id").autoincrement(),
+	id: int("id").autoincrement().primaryKey(),
 	name: varchar("name", { length: 255 }),
 	content: text("content"),
 	createdDate: timestamp("created_date", { mode: 'string' }).defaultNow().notNull(),
