@@ -86,8 +86,12 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
 
   const getChatroom = async (name: string) => {
     try {
-      const newConversation = await twilioClient.conversations.v1.conversations(name).fetch();
-      return newConversation;
+      const newConversation = await twilioClient.conversations.v1.conversations.list();
+      for (let i = 0; i < newConversation.length; i++) {
+        if (newConversation[i].friendlyName === name) {
+          return newConversation;
+        }
+      }
     } catch {
       // a conversation with the given name does not exist ==> create a new one
       const newConversation = await twilioClient.conversations.v1.conversations.create({
@@ -113,7 +117,7 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
   });
 
   const chatGrant = new ChatGrant({
-    serviceSid: conversation.chatServiceSid
+    serviceSid: "IS655aa7db384842ecb7419c4ce6ac585c"
   });
   
   twilioToken.addGrant(videoGrant);
