@@ -124,7 +124,6 @@ export async function GET(req: NextRequest, res: NextApiResponse) {
   });
 
   const chatGrant = new ChatGrant({
-    serviceSid: conversation.chatServiceSid,
   });
   
   twilioToken.addGrant(videoGrant);
