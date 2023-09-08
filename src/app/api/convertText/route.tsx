@@ -3,6 +3,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { Hercai } from "hercai";
 import { HercaiData } from "hercai/types/src/hercai";
 
+export const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS(req: NextRequest) {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function GET(req: NextRequest, res: NextApiResponse) {
   const text = req.nextUrl.searchParams.get("text");
   const type = req.nextUrl.searchParams.get("type");
